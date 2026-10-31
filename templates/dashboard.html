@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block body %}
+<h1>Dashboard</h1>
+<div class="grid">
+<div class="card"><div class="mut">Open pipeline</div><div class="kpi">{{ pipeline|money }}</div></div>
+<div class="card"><div class="mut">Won this month</div><div class="kpi">{{ won_month|money }}</div>
+{% if g.user.monthly_target %}<div class="bar"><i style="width:{{ [100, won_month/g.user.monthly_target*100]|min }}%"></i></div><div class="mut">Your target {{ g.user.monthly_target|money }}</div>{% endif %}</div>
+<div class="card"><div class="mut">Win rate</div><div class="kpi">{{ win_rate }}%</div></div></div>
+<div class="card"><h2>Pipeline by stage</h2><table><tr><th>Stage</th><th>Deals</th><th>Value</th></tr>
+{% for s in STAGES %}<tr><td><a href="{{ url_for('deals', stage=s) }}">{{ s }}</a></td><td>{{ by_stage[s]|length }}</td><td>{{ by_stage[s]|sum(attribute='amount')|money }}</td></tr>{% endfor %}</table></div>
+<div class="grid"><div class="card"><h2>Leaderboard (won revenue)</h2>
+{% for n, v in board %}<div class="top"><span>{{ n }}</span><b>{{ v|money }}</b></div>{% else %}<p class="mut">No won deals yet.</p>{% endfor %}</div>
+<div class="card"><h2>Closing soon</h2>{% for d in closing %}<div class="top"><a href="{{ url_for('deal', id=d.id) }}">{{ d.title }}</a><span class="mut">{{ d.expected_close }}</span></div>{% else %}<p class="mut">Nothing scheduled.</p>{% endfor %}</div>
+<div class="card"><h2>My open tasks</h2>{% for a in tasks %}<form method="post" action="{{ url_for('activity_done', id=a.id) }}" class="top">
+<span><b>{{ a.kind }}</b> {{ a.note }} <a href="{{ url_for('deal', id=a.deal_id) }}">{{ a.deal.title }}</a>{% if a.due and a.due < today() %} <span class="tag Lost">overdue</span>{% endif %}</span><button class="ghost">Done</button></form>{% else %}<p class="mut">You're all caught up.</p>{% endfor %}</div></div>
+{% endblock %}

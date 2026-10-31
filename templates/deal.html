@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% block body %}
+<div class="top"><h1>{{ d.title }} <span class="tag {{ d.stage }}">{{ d.stage }}</span></h1>
+{% if editable %}<a class="btn ghost" href="{{ url_for('deal_form', id=d.id) }}">Edit deal</a>{% endif %}</div>
+<div class="card"><p><a href="{{ url_for('client', id=d.client_id) }}">{{ d.client.name }}</a> · Owner {{ d.owner.name }} · Close {{ d.expected_close or 'not set' }}</p>
+<p class="kpi">{{ d.amount|money }}</p>
+<p class="mut">Commission pool = {{ d.amount|money }} × {{ d.rate }}% = <b>{{ d.pool|money }}</b>{% if d.stage != 'Won' %} (paid out only when the deal is Won){% endif %}</p>
+<p>{{ d.notes }}</p>
+{% if editable %}<form method="post" action="{{ url_for('deal_stage', id=d.id) }}" class="row"><select name="stage">{% for s in STAGES %}<option {{ 'selected' if s==d.stage }}>{{ s }}</option>{% endfor %}</select><button>Move stage</button></form>{% endif %}</div>
+
+<div class="card"><h2>Teaming agreement</h2>
+<table><tr><th>Member</th><th>Share of pool</th><th>Payout</th></tr>
+{% for m in d.members %}<tr><td>{{ m.user.name }}</td><td>{{ m.share }}%</td><td>{{ m.payout|money }}</td></tr>{% endfor %}</table>
+{% if d.team_terms %}<p class="mut">Terms: {{ d.team_terms }}</p>{% endif %}
+{% if editable %}<details><summary>Edit team and split</summary><form method="post" action="{{ url_for('deal_team', id=d.id) }}">
+{% for i in range(d.members|length + 2) %}{% set m = d.members[i] if i < d.members|length else none %}
+<div class="row"><div><label>Member</label><select name="user_id"><option value="">-</option>{% for u in users %}<option value="{{ u.id }}" {{ 'selected' if m and m.user_id==u.id }}>{{ u.name }}</option>{% endfor %}</select></div>
+<div><label>Share %</label><input name="share" type="number" step="0.01" value="{{ m.share if m else '' }}"></div></div>{% endfor %}
+<label>Agreement terms</label><textarea name="team_terms">{{ d.team_terms or '' }}</textarea><p class="mut">Shares must total 100%.</p><button>Save agreement</button></form></details>{% endif %}</div>
+
+<div class="card"><h2>Documents</h2>
+<form method="post" action="{{ url_for('upload', id=d.id) }}" enctype="multipart/form-data" class="row">
+<div><label>Type</label><select name="kind">{% for k in DOC_KINDS %}<option>{{ k }}</option>{% endfor %}</select></div>
+<div><label>File (max 25 MB)</label><input type="file" name="file" required></div><button>Upload</button></form>
+<table>{% for x in d.documents %}<tr><td><span class="tag">{{ x.kind }}</span></td><td><a href="{{ url_for('download', id=x.id) }}">{{ x.filename }}</a></td>
+<td class="mut">{{ x.uploader.name if x.uploader }} · {{ x.created.strftime('%Y-%m-%d') }}</td>
+<td>{% if editable %}<form method="post" action="{{ url_for('doc_delete', id=x.id) }}"><button class="link">Delete</button></form>{% endif %}</td></tr>
+{% else %}<tr><td class="mut">No documents yet. Upload the RFP, quotations or proposals.</td></tr>{% endfor %}</table></div>
+
+<div class="card"><h2>Activities and follow-ups</h2>
+<form method="post" action="{{ url_for('activity', id=d.id) }}" class="row"><div><label>Type</label><select name="kind">{% for k in ACT_KINDS %}<option>{{ k }}</option>{% endfor %}</select></div>
+<div><label>Note</label><input name="note" required></div><div><label>Due</label><input name="due" type="date"></div><button>Add</button></form>
+<table>{% for a in d.activities %}<tr><td>{{ a.kind }}</td><td>{{ a.note }}</td><td>{{ a.due or '' }}</td><td>{{ a.user.name if a.user }}</td>
+<td><form method="post" action="{{ url_for('activity_done', id=a.id) }}"><button class="ghost">{{ 'Reopen' if a.done else 'Done' }}</button></form></td></tr>{% endfor %}</table></div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<div class="top"><h1>Deals</h1><a class="btn" href="{{ url_for('deal_form') }}">New deal</a></div>
+<form class="card row"><select name="stage"><option value="">All stages</option>{% for s in STAGES %}<option {{ 'selected' if request.args.get('stage')==s }}>{{ s }}</option>{% endfor %}</select>
+<select name="mine"><option value="">Everyone's deals</option><option value="1" {{ 'selected' if request.args.get('mine') }}>My deals</option></select><button>Filter</button></form>
+<div class="card"><table><tr><th>Deal</th><th>Client</th><th>Owner</th><th>Stage</th><th>Amount</th><th>Close date</th></tr>
+{% for d in rows %}<tr><td><a href="{{ url_for('deal', id=d.id) }}">{{ d.title }}</a></td><td>{{ d.client.name }}</td><td>{{ d.owner.name }}</td>
+<td><span class="tag {{ d.stage }}">{{ d.stage }}</span></td><td>{{ d.amount|money }}</td><td>{{ d.expected_close or '' }}</td></tr>
+{% else %}<tr><td colspan="6" class="mut">No deals match.</td></tr>{% endfor %}</table></div>{% endblock %}

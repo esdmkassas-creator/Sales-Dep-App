@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<h1>{{ 'Edit' if d.id else 'New' }} deal</h1>
+<form method="post" class="card">
+<label>Deal title</label><input name="title" value="{{ d.title or '' }}" required>
+<label>Client</label><select name="client_id" required>{% for c in clients %}<option value="{{ c.id }}" {{ 'selected' if c.id==d.client_id }}>{{ c.name }}</option>{% endfor %}</select>
+{% if g.user.role != 'rep' %}<label>Deal owner</label><select name="owner_id">{% for u in users %}<option value="{{ u.id }}" {{ 'selected' if u.id==d.owner_id }}>{{ u.name }}</option>{% endfor %}</select>{% endif %}
+<div class="row"><div><label>Total amount</label><input name="amount" type="number" step="0.01" value="{{ d.amount or '' }}" required></div>
+<div><label>Commission % (blank = owner's rate)</label><input name="commission_rate" type="number" step="0.01" value="{{ d.commission_rate if d.commission_rate is not none else '' }}"></div>
+<div><label>Expected close</label><input name="expected_close" type="date" value="{{ d.expected_close or '' }}"></div></div>
+<label>Notes</label><textarea name="notes">{{ d.notes or '' }}</textarea><br><button>Save deal</button></form>{% endblock %}

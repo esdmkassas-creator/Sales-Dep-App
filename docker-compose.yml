@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16
+    environment: {POSTGRES_USER: sales, POSTGRES_PASSWORD: sales, POSTGRES_DB: sales}
+    volumes: [pgdata:/var/lib/postgresql/data]
+  web:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql://sales:sales@db:5432/sales
+      SECRET_KEY: change-me
+      ADMIN_EMAIL: admin@company.com
+      ADMIN_PASSWORD: change-me-now
+      UPLOAD_DIR: /data/uploads
+    volumes: [uploads:/data/uploads]
+    depends_on: [db]
+volumes: {pgdata: {}, uploads: {}}

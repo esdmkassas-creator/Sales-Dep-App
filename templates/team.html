@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block body %}
+<div class="top"><h1>Sales team</h1>{% if g.user.role=='admin' %}<a class="btn" href="{{ url_for('user_form') }}">Add member</a>{% endif %}</div>
+<div class="card"><table><tr><th>Name</th><th>Role</th><th>Commission</th><th>Won this month</th><th>Target</th><th>Open deals</th><th></th></tr>
+{% for u in rows %}<tr><td>{{ u.name }}<div class="mut">{{ u.email }}{{ '' if u.active else ' · inactive' }}</div></td><td>{{ u.role }}</td><td>{{ u.commission_rate }}%</td>
+<td>{{ stats[u.id][0]|money }}</td><td>{{ u.monthly_target|money }}</td><td>{{ stats[u.id][1] }}</td>
+<td>{% if g.user.role=='admin' %}<a href="{{ url_for('user_form', id=u.id) }}">Edit</a>{% endif %}</td></tr>{% endfor %}</table></div>{% endblock %}

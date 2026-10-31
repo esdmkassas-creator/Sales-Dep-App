@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block body %}
+<h1>{{ 'Edit' if c.id else 'New' }} client</h1>
+<form method="post" class="card">
+{% for n, l in [('name','Company name'),('industry','Industry'),('contact_name','Main contact'),('email','Email'),('phone','Phone'),('address','Address')] %}
+<label>{{ l }}</label><input name="{{ n }}" value="{{ c[n] or '' }}" {{ 'required' if n=='name' }}>{% endfor %}
+<label>Notes</label><textarea name="notes">{{ c.notes or '' }}</textarea><br><button>Save client</button></form>{% endblock %}

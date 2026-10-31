@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<h1>{{ 'Edit' if u.id else 'Add' }} team member</h1>
+<form method="post" class="card">
+<label>Name</label><input name="name" value="{{ u.name or '' }}" required>
+<label>Email</label><input name="email" type="email" value="{{ u.email or '' }}" required>
+<label>Password {{ '(leave blank to keep)' if u.id }}</label><input name="password" type="password">
+<label>Role</label><select name="role">{% for r in roles %}<option {{ 'selected' if r==u.role }}>{{ r }}</option>{% endfor %}</select>
+<div class="row"><div><label>Commission % of deal amount</label><input name="commission_rate" type="number" step="0.01" value="{{ u.commission_rate if u.commission_rate is not none else 5 }}"></div>
+<div><label>Monthly target</label><input name="monthly_target" type="number" step="0.01" value="{{ u.monthly_target or 0 }}"></div></div>
+{% if u.id %}<label><input type="checkbox" name="active" style="width:auto" {{ 'checked' if u.active }}> Active</label>{% endif %}
+<br><button>Save</button></form>{% endblock %}

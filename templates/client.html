@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block body %}
+<div class="top"><h1>{{ c.name }}</h1><span><a class="btn ghost" href="{{ url_for('client_form', id=c.id) }}">Edit</a>
+<a class="btn" href="{{ url_for('deal_form', client_id=c.id) }}">New deal</a></span></div>
+<div class="card"><p>{{ c.industry }} · {{ c.contact_name }} · {{ c.email }} · {{ c.phone }}</p><p>{{ c.address }}</p><p class="mut">{{ c.notes }}</p></div>
+<div class="card"><h2>Deals</h2><table><tr><th>Deal</th><th>Stage</th><th>Amount</th></tr>
+{% for d in c.deals %}<tr><td><a href="{{ url_for('deal', id=d.id) }}">{{ d.title }}</a></td><td><span class="tag {{ d.stage }}">{{ d.stage }}</span></td><td>{{ d.amount|money }}</td></tr>
+{% else %}<tr><td colspan="3" class="mut">No deals with this client yet.</td></tr>{% endfor %}</table></div>{% endblock %}

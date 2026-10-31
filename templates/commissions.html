@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block body %}
+<h1>Commissions</h1><p class="mut">Won deals only. Payout = deal amount × commission % × member share.</p>
+<div class="grid">{% for n, v in totals %}<div class="card"><div class="mut">{{ n }}</div><div class="kpi">{{ v|money }}</div></div>{% endfor %}</div>
+<div class="card"><table><tr><th>Deal</th><th>Closed</th><th>Amount</th><th>Rate</th><th>Member</th><th>Share</th><th>Payout</th></tr>
+{% for d, m in rows %}<tr><td><a href="{{ url_for('deal', id=d.id) }}">{{ d.title }}</a></td><td>{{ d.closed_at or '' }}</td><td>{{ d.amount|money }}</td><td>{{ d.rate }}%</td><td>{{ m.user.name }}</td><td>{{ m.share }}%</td><td>{{ m.payout|money }}</td></tr>
+{% else %}<tr><td colspan="7" class="mut">No won deals yet.</td></tr>{% endfor %}</table></div>{% endblock %}

@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sales Hub</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body>
+{% if g.user %}<div class="shell"><nav><b>Sales Hub</b>
+<a href="{{ url_for('dashboard') }}">Dashboard</a><a href="{{ url_for('deals') }}">Deals</a>
+<a href="{{ url_for('clients') }}">Clients</a><a href="{{ url_for('commissions') }}">Commissions</a>
+<a href="{{ url_for('team') }}">Sales team</a>
+<small>{{ g.user.name }} ({{ g.user.role }})</small><a href="{{ url_for('logout') }}">Log out</a></nav><main>
+{% else %}<main>{% endif %}
+{% for m in get_flashed_messages() %}<div class="flash">{{ m }}</div>{% endfor %}
+{% block body %}{% endblock %}</main>{% if g.user %}</div>{% endif %}</body></html>
